@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibliothèque Horizon — Savoir, Culture & Gestion</title>
+    <!-- Chargement de Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Polices Google Fonts : Playfair Display pour l'élégance littéraire & Plus Jakarta Sans pour la lisibilité -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Icônes Lucide via CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        midnight: {
+                            950: '#090F1D',
+                            900: '#0F172A',
+                            800: '#1E293B',
+                            700: '#334155',
+                        },
+                        cream: {
+                            50: '#FDFBF7',
+                            100: '#F7F3EA',
+                            200: '#EFE7D6',
+                        },
+                        amber: {
+                            400: '#FBBF24',
+                            500: '#D97706',
+                            600: '#B45309',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+                        sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-cream-50 text-midnight-900 font-sans antialiased selection:bg-amber-500 selection:text-white">
+
+    <!-- ==================== BARRE DE NAVIGATION ==================== -->
+    <header class="sticky top-0 z-40 bg-midnight-900/95 backdrop-blur-md text-cream-50 border-b border-midnight-800 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <a href="#accueil" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-midnight-950 shadow-md group-hover:scale-105 transition-transform">
+                        <i data-lucide="book-open" class="w-6 h-6 stroke-[2.2]"></i>
+                    </div>
+                    <div>
+                        <span class="font-serif text-xl sm:text-2xl font-bold tracking-tight text-white block leading-none">Horizon</span>
+                        <span class="text-[11px] uppercase tracking-[0.2em] text-amber-400 font-semibold">Bibliothèque</span>
+                    </div>
+                </a>
+
+                <!-- Liens Desktop -->
+                <nav class="hidden md:flex items-center space-x-8 text-sm font-medium">
+                    <a href="#accueil" class="text-cream-100 hover:text-amber-400 transition-colors">Accueil</a>
+                    <a href="#catalogue" class="text-cream-100 hover:text-amber-400 transition-colors">Catalogue</a>
+                    <a href="#services" class="text-cream-100 hover:text-amber-400 transition-colors">Services & Tarifs</a>
+                    <a href="#statistiques" class="text-cream-100 hover:text-amber-400 transition-colors">Statistiques</a>
+                    <a href="#adhesion" class="text-cream-100 hover:text-amber-400 transition-colors">Adhésion</a>
+                </nav>
+
+                <!-- Boutons d'actions rapides -->
+                <div class="flex items-center space-x-3">
+                    <!-- Bouton Mode Bibliothécaire (Ajouter un livre) -->
+                    <button onclick="openAddBookModal()" class="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-midnight-800 hover:bg-midnight-700 text-amber-400 border border-midnight-700 text-xs font-semibold transition-all" title="Mode Gestionnaire : Ajouter un ouvrage">
+                        <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                        <span>Gestion</span>
+                    </button>
+
+                    <!-- Panier / Mes Emprunts -->
+                    <button onclick="toggleLoansDrawer()" class="relative inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-midnight-950 font-bold text-sm shadow-md transition-all active:scale-95">
+                        <i data-lucide="bookmark-check" class="w-4 h-4 stroke-[2.5]"></i>
+                        <span class="hidden sm:inline">Mes Emprunts</span>
+                        <span id="loans-badge" class="inline-flex items-center justify-center w-5 h-5 text-xs font-extrabold rounded-full bg-midnight-900 text-amber-400">0</span>
+                    </button>
+
+                    <!-- Bouton Menu Mobile -->
+                    <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="md:hidden p-2.5 rounded-xl text-cream-100 hover:bg-midnight-800 focus:outline-none" aria-label="Menu principal">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menu Mobile Déroulant -->
+        <div id="mobile-menu" class="hidden md:hidden bg-midnight-900 border-t border-midnight-800 px-4 pt-3 pb-6 space-y-2">
+            <a href="#accueil" onclick="toggleMobileMenu()" class="block px-3 py-2.5 rounded-xl text-base font-medium text-cream-100 hover:bg-midnight-800 hover:text-amber-400">Accueil</a>
+            <a href="#catalogue" onclick="toggleMobileMenu()" class="block px-3 py-2.5 rounded-xl text-base font-medium text-cream-100 hover:bg-midnight-800 hover:text-amber-400">Catalogue</a>
+            <a href="#services" onclick="toggleMobileMenu()" class="block px-3 py-2.5 rounded-xl text-base font-medium text-cream-100 hover:bg-midnight-800 hover:text-amber-400">Services & Tarifs</a>
+            <a href="#statistiques" onclick="toggleMobileMenu()" class="block px-3 py-2.5 rounded-xl text-base font-medium text-cream-100 hover:bg-midnight-800 hover:text-amber-400">Statistiques</a>
+            <a href="#adhesion" onclick="toggleMobileMenu()" class="block px-3 py-2.5 rounded-xl text-base font-medium text-cream-100 hover:bg-midnight-800 hover:text-amber-400">Adhésion & Contact</a>
+            <div class="pt-2 border-t border-midnight-800">
+                <button onclick="toggleMobileMenu(); openAddBookModal();" class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-midnight-800 text-amber-400 font-semibold text-sm">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                    <span>Mode Bibliothécaire (Ajouter un livre)</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== SECTION HERO ==================== -->
+    <section id="accueil" class="relative overflow-hidden bg-midnight-900 text-cream-50 pt-16 pb-24 lg:pt-24 lg:pb-32">
+        <!-- Motifs décoratifs d'arrière-plan -->
+        <div class="absolute inset-0 opacity-10 pointer-events-none">
+            <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-amber-500 blur-3xl"></div>
+            <div class="absolute bottom-0 left-10 w-80 h-80 rounded-full bg-blue-500 blur-3xl"></div>
+        </div>
+
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                <!-- Colonne Texte & Recherche -->
+                <div class="lg:col-span-7 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-midnight-800/90 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider mb-6">
+                        <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                        <span>Espace Culturel & Médiathèque Connectée</span>
+                    </div>
+
+                    <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+                        Explorez des milliers d'univers à la <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-500">Bibliothèque Horizon</span>
+                    </h1>
+
+                    <p class="text-cream-200/90 text-base sm:text-lg max-w-2xl mx-auto lg:mx-0 mb-8 leading-relaxed">
+                        Consultez notre catalogue en temps réel, réservez vos prochains coups de cœur littéraires en un clic et profitez de nos espaces d'étude modernes et chaleureux.
+                    </p>
+
+                    <!-- Barre de recherche rapide Hero -->
+                    <div class="max-w-xl mx-auto lg:mx-0 bg-white p-2 rounded-2xl shadow-2xl flex flex-col sm:flex-row gap-2">
+                        <div class="relative flex-1 flex items-center">
+                            <i data-lucide="search" class="w-5 h-5 text-slate-400 ml-3 shrink-0"></i>
+                            <input
+                                type="text"
+                                id="hero-search-input"
+                                placeholder="Titre, auteur, mot-clé (ex: Dune, Code, Hugo...)"
+                                class="w-full px-3 py-3 text-midnight-900 placeholder-slate-400 bg-transparent focus:outline-none text-sm sm:text-base"
+                                onkeyup="if(event.key === 'Enter') triggerHeroSearch()"
+                            >
+                        </div>
+                        <button onclick="triggerHeroSearch()" class="px-6 py-3.5 rounded-xl bg-midnight-900 hover:bg-midnight-800 text-amber-400 font-semibold text-sm transition-all flex items-center justify-center gap-2 shrink-0">
+                            <span>Rechercher</span>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <!-- Indicateurs rapides -->
+                    <div class="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-xs sm:text-sm text-cream-200/80">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-400"></i>
+                            <span>Réservation instantanée</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-400"></i>
+                            <span>Prêt jusqu'à 21 jours</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-400"></i>
+                            <span>Accès Wi-Fi & E-books</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Colonne Illustration Vitrine -->
+                <div class="lg:col-span-5 hidden lg:block">
+                    <div class="relative mx-auto w-full max-w-md">
+                        <div class="absolute -inset-3 rounded-3xl bg-gradient-to-tr from-amber-500/30 to-blue-500/20 blur-xl"></div>
+                        <div class="relative bg-midnight-800 border border-midnight-700 rounded-3xl p-6 shadow-2xl">
+                            <div class="flex items-center justify-between border-b border-midnight-700 pb-4 mb-5">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-3 h-3 rounded-full bg-rose-500"></span>
+                                    <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+                                    <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+                                </div>
+                                <span class="text-xs font-medium text-slate-400">Sélection du mois</span>
+                            </div>
+
+                            <!-- Cartes mini-aperçu -->
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-4 p-3 rounded-2xl bg-midnight-900/80 border border-midnight-700/70">
+                                    <div class="w-12 h-16 rounded-lg bg-gradient-to-br from-amber-500 to-orange-700 flex items-center justify-center text-white font-serif font-bold text-lg shrink-0 shadow">D</div>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="text-white font-semibold text-sm truncate">Dune — Tome I</p>
+                                        <p class="text-slate-400 text-xs">Frank Herbert • Science-Fiction</p>
+                                        <span class="inline-block mt-1 px-2 py-0.5 text-[10px] font-semibold rounded-full bg-emerald-500/20 text-emerald-300">Disponible</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-4 p-3 rounded-2xl bg-midnight-900/80 border border-midnight-700/70">
+                                    <div class="w-12 h-16 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-900 flex items-center justify-center text-white font-serif font-bold text-lg shrink-0 shadow">C</div>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="text-white font-semibold text-sm truncate">Clean Code</p>
+                                        <p class="text-slate-400 text-xs">Robert C. Martin • Informatique</p>
+                                        <span class="inline-block mt-1 px-2 py-0.5 text-[10px] font-semibold rounded-full bg-emerald-500/20 text-emerald-300">Disponible</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-4 p-3 rounded-2xl bg-midnight-900/80 border border-midnight-700/70">
+                                    <div class="w-12 h-16 rounded-lg bg-gradient-to-br from-emerald-600 to-teal-900 flex items-center justify-center text-white font-serif font-bold text-lg shrink-0 shadow">S</div>
+                                    <div class="min-w-0 flex-1">
+                                        <p class="text-white font-semibold text-sm truncate">Sapiens : Une brève histoire</p>
+                                        <p class="text-slate-400 text-xs">Yuval Noah Harari • Histoire</p>
+                                        <span class="inline-block mt-1 px-2 py-0.5 text-[10px] font-semibold rounded-full bg-amber-500/20 text-amber-300">Coup de cœur</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SECTION STATISTIQUES EN DIRECT ==================== -->
+    <section id="statistiques" class="relative -mt-10 z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-3xl shadow-xl border border-cream-200 p-6 sm:p-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-6 mb-6 border-b border-cream-200">
+                <div>
+                    <h2 class="font-serif text-xl sm:text-2xl font-bold text-midnight-900">État du Fonds Documentaire en Direct</h2>
+                    <p class="text-sm text-slate-500">Mise à jour instantanée selon vos emprunts, retours et ajouts au catalogue.</p>
+                </div>
+                <span class="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full self-start sm:self-auto">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                    Synchronisé en temps réel
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <!-- Stat 1 : Total -->
+                <div class="flex items-center gap-4 p-5 rounded-2xl bg-cream-50 border border-cream-200">
+                    <div class="w-14 h-14 rounded-2xl bg-midnight-900 text-amber-400 flex items-center justify-center shrink-0">
+                        <i data-lucide="library" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-slate-500">Total des Ouvrages</p>
+                        <p id="stat-total" class="text-3xl font-extrabold text-midnight-900 mt-0.5">0</p>
+                    </div>
+                </div>
+
+                <!-- Stat 2 : Disponibles -->
+                <div class="flex items-center gap-4 p-5 rounded-2xl bg-emerald-50/60 border border-emerald-200/80">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                        <i data-lucide="book-check" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-emerald-800">Livres Disponibles</p>
+                        <p id="stat-available" class="text-3xl font-extrabold text-emerald-900 mt-0.5">0</p>
+                    </div>
+                </div>
+
+                <!-- Stat 3 : Empruntés -->
+                <div class="flex items-center gap-4 p-5 rounded-2xl bg-amber-50/70 border border-amber-200">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-500 text-midnight-950 flex items-center justify-center shrink-0">
+                        <i data-lucide="book-up" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-amber-900">Livres Empruntés</p>
+                        <p id="stat-borrowed" class="text-3xl font-extrabold text-amber-950 mt-0.5">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SECTION CATALOGUE INTERACTIF ==================== -->
+    <section id="catalogue" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- En-tête Catalogue -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+            <div>
+                <span class="text-amber-600 font-bold text-xs uppercase tracking-widest">Collection & Ressources</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-midnight-900 mt-1">Catalogue Interactif</h2>
+                <p class="text-slate-600 mt-2 max-w-2xl">Filtrez par discipline, recherchez un ouvrage ou cliquez sur une fiche pour consulter son résumé et l'emprunter.</p>
+            </div>
+
+            <button onclick="openAddBookModal()" class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-midnight-900 hover:bg-midnight-800 text-amber-400 font-semibold text-sm shadow-md transition-all self-start md:self-auto">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span>Ajouter un livre (Gestionnaire)</span>
+            </button>
+        </div>
+
+        <!-- Barre de Contrôle : Filtres + Recherche en temps réel -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-cream-200 mb-8 space-y-4">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <!-- Boutons de catégories -->
+                <div id="category-filters" class="flex flex-wrap gap-2">
+                    <button onclick="setCategory('Tous')" data-cat="Tous" class="filter-btn active px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-midnight-900 text-amber-400">
+                        Tous
+                    </button>
+                    <button onclick="setCategory('Roman')" data-cat="Roman" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-cream-100 text-midnight-800 hover:bg-cream-200">
+                        Roman
+                    </button>
+                    <button onclick="setCategory('Science-Fiction')" data-cat="Science-Fiction" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-cream-100 text-midnight-800 hover:bg-cream-200">
+                        Science-Fiction
+                    </button>
+                    <button onclick="setCategory('Informatique')" data-cat="Informatique" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-cream-100 text-midnight-800 hover:bg-cream-200">
+                        Informatique
+                    </button>
+                    <button onclick="setCategory('Histoire')" data-cat="Histoire" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-cream-100 text-midnight-800 hover:bg-cream-200">
+                        Histoire
+                    </button>
+                    <button onclick="setCategory('Développement personnel')" data-cat="Développement personnel" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-cream-100 text-midnight-800 hover:bg-cream-200">
+                        Développement personnel
+                    </button>
+                </div>
+
+                <!-- Recherche en temps réel & Filtre disponibilité -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="relative flex-1 sm:w-64">
+                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+                        <input
+                            type="text"
+                            id="catalog-search"
+                            oninput="handleSearchInput(this.value)"
+                            placeholder="Filtrer par titre ou auteur..."
+                            class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-cream-50 border border-cream-200 text-sm text-midnight-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                        >
+                    </div>
+                    <select id="status-filter" onchange="handleStatusFilter(this.value)" class="px-3.5 py-2.5 rounded-xl bg-cream-50 border border-cream-200 text-sm font-medium text-midnight-800 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        <option value="all">Tous les statuts</option>
+                        <option value="available">Disponibles uniquement</option>
+                        <option value="borrowed">Empruntés uniquement</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grille des livres -->
+        <div id="books-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Les cartes de livres sont générées dynamiquement par JavaScript -->
+        </div>
+
+        <!-- État vide si aucun résultat -->
+        <div id="empty-catalog-state" class="hidden text-center py-16 bg-white rounded-3xl border border-cream-200">
+            <div class="w-16 h-16 rounded-2xl bg-cream-100 text-slate-400 flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="book-x" class="w-8 h-8"></i>
+            </div>
+            <h3 class="font-serif text-xl font-bold text-midnight-900">Aucun ouvrage trouvé</h3>
+            <p class="text-slate-500 text-sm mt-1 max-w-md mx-auto">Essayez de modifier vos filtres de recherche ou réinitialisez la catégorie sélectionnée.</p>
+            <button onclick="resetFilters()" class="mt-5 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-midnight-950 font-semibold text-sm transition-colors">
+                Réinitialiser les filtres
+            </button>
+        </div>
+    </section>
+
+    <!-- ==================== SECTION SERVICES, HORAIRES & TARIFS ==================== -->
+    <section id="services" class="py-20 bg-cream-100/80 border-y border-cream-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-14">
+                <span class="text-amber-600 font-bold text-xs uppercase tracking-widest">Bien plus que des livres</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-midnight-900 mt-1">Nos Services & Espaces</h2>
+                <p class="text-slate-600 mt-3">La Bibliothèque Horizon vous accompagne dans vos recherches, vos études et vos découvertes culturelles tout au long de l'année.</p>
+            </div>
+
+            <!-- Grille des 4 Services -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                <!-- Service 1 -->
+                <div class="bg-white p-6 rounded-3xl border border-cream-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-2xl bg-midnight-900 text-amber-400 flex items-center justify-center mb-5">
+                        <i data-lucide="laptop" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-serif text-xl font-bold text-midnight-900 mb-2">Espace Numérique</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">Postes informatiques haute performance, Wi-Fi fibre gratuit, accès aux revues scientifiques et liseuses numériques.</p>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="bg-white p-6 rounded-3xl border border-cream-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-500 text-midnight-950 flex items-center justify-center mb-5">
+                        <i data-lucide="lamp-desk" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-serif text-xl font-bold text-midnight-900 mb-2">Salles d'Étude</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">Espaces silencieux climatisés et cabines de travail collaboratif équipées de tableaux blancs et prises électriques.</p>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="bg-white p-6 rounded-3xl border border-cream-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-2xl bg-midnight-900 text-amber-400 flex items-center justify-center mb-5">
+                        <i data-lucide="home" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-serif text-xl font-bold text-midnight-900 mb-2">Prêt à Domicile</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">Empruntez jusqu'à 5 ouvrages simultanément pour une durée de 3 semaines, renouvelable directement en ligne.</p>
+                </div>
+
+                <!-- Service 4 -->
+                <div class="bg-white p-6 rounded-3xl border border-cream-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-500 text-midnight-950 flex items-center justify-center mb-5">
+                        <i data-lucide="sparkles" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-serif text-xl font-bold text-midnight-900 mb-2">Ateliers Culturels</h3>
+                    <p class="text-sm text-slate-600 leading-relaxed">Clubs de lecture hebdomadaires, rencontres d'auteurs, initiation au code et heures du conte pour la jeunesse.</p>
+                </div>
+            </div>
+
+            <!-- Bloc Horaires & Tarifs -->
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Horaires d'ouverture -->
+                <div class="bg-midnight-900 text-cream-50 rounded-3xl p-8 shadow-xl">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                            <i data-lucide="clock" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-serif text-2xl font-bold text-white">Horaires d'Ouverture</h3>
+                    </div>
+                    <ul class="space-y-3.5 text-sm">
+                        <li class="flex justify-between items-center py-2 border-b border-midnight-800">
+                            <span class="text-cream-200">Lundi</span>
+                            <span class="font-semibold text-amber-400">13h00 — 19h00</span>
+                        </li>
+                        <li class="flex justify-between items-center py-2 border-b border-midnight-800">
+                            <span class="text-cream-200">Mardi au Vendredi</span>
+                            <span class="font-semibold text-white">09h00 — 20h00</span>
+                        </li>
+                        <li class="flex justify-between items-center py-2 border-b border-midnight-800">
+                            <span class="text-cream-200">Samedi</span>
+                            <span class="font-semibold text-white">10h00 — 18h00</span>
+                        </li>
+                        <li class="flex justify-between items-center py-2">
+                            <span class="text-cream-200">Dimanche & Jours fériés</span>
+                            <span class="px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-xs font-semibold">Fermé</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Grille Tarifaire -->
+                <div class="bg-white rounded-3xl p-8 border border-cream-200 shadow-sm">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                            <i data-lucide="credit-card" class="w-5 h-5"></i>
+                        </div>
+                        <h3 class="font-serif text-2xl font-bold text-midnight-900">Tarifs d'Adhésion Annuelle</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 rounded-2xl bg-cream-50 border border-cream-200">
+                            <div>
+                                <p class="font-bold text-midnight-900">Consultation sur place</p>
+                                <p class="text-xs text-slate-500">Accès libre aux salles de lecture et Wi-Fi</p>
+                            </div>
+                            <span class="font-extrabold text-emerald-700 text-lg">Gratuit</span>
+                        </div>
+                        <div class="flex items-center justify-between p-4 rounded-2xl bg-cream-50 border border-cream-200">
+                            <div>
+                                <p class="font-bold text-midnight-900">Étudiants & Jeunes (-25 ans)</p>
+                                <p class="text-xs text-slate-500">Emprunts illimités + ressources numériques</p>
+                            </div>
+                            <span class="font-extrabold text-midnight-900 text-lg">5 000 FCFA <span class="text-xs font-normal text-slate-500">/an</span></span>
+                        </div>
+                        <div class="flex items-center justify-between p-4 rounded-2xl bg-amber-50/70 border border-amber-200">
+                            <div>
+                                <p class="font-bold text-midnight-900">Pass Lecteur Adulte</p>
+                                <p class="text-xs text-slate-600">Prêt à domicile, réservations & ateliers</p>
+                            </div>
+                            <span class="font-extrabold text-amber-700 text-lg">10 000 FCFA <span class="text-xs font-normal text-slate-600">/an</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== SECTION ADHÉSION & CONTACT ==================== -->
+    <section id="adhesion" class="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-12 gap-12 items-start">
+            <!-- Informations de Contact -->
+            <div class="lg:col-span-5 space-y-6">
+                <span class="text-amber-600 font-bold text-xs uppercase tracking-widest">Rejoignez-nous</span>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-midnight-900">Devenez Membre ou Contactez-nous</h2>
+                <p class="text-slate-600 leading-relaxed">
+                    Remplissez le formulaire ci-contre pour obtenir votre carte de lecteur Horizon ou poser une question à notre équipe de bibliothécaires.
+                </p>
+
+                <div class="space-y-4 pt-2">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-midnight-900 text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
+                            <i data-lucide="map-pin" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-midnight-900 text-sm">Adresse</h4>
+                            <p class="text-sm text-slate-600">Avenue de la Culture, Quartier Bonapriso, Douala</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-midnight-900 text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
+                            <i data-lucide="phone" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-midnight-900 text-sm">Téléphone</h4>
+                            <p class="text-sm text-slate-600">+237 6 99 00 11 22</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-midnight-900 text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
+                            <i data-lucide="mail" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-midnight-900 text-sm">Courriel</h4>
+                            <p class="text-sm text-slate-600">accueil@bibliotheque-horizon.org</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Formulaire interactif -->
+            <div class="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-10 shadow-xl border border-cream-200">
+                <form id="membership-form" onsubmit="handleMembershipSubmit(event)" class="space-y-5" novalidate>
+                    <div class="grid sm:grid-cols-2 gap-5">
+                        <div>
+                            <label for="fullName" class="block text-xs font-bold uppercase tracking-wider text-midnight-800 mb-2">Nom complet *</label>
+                            <input type="text" id="fullName" required placeholder="Ex: Aminata Diallo" class="w-full px-4 py-3 rounded-xl bg-cream-50 border border-cream-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-xs font-bold uppercase tracking-wider text-midnight-800 mb-2">Adresse Email *</label>
+                            <input type="email" id="email" required placeholder="aminata@exemple.com" class="w-full px-4 py-3 rounded-xl bg-cream-50 border border-cream-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+                    </div>
+
+                    <div class="grid sm:grid-cols-2 gap-5">
+                        <div>
+                            <label for="requestType" class="block text-xs font-bold uppercase tracking-wider text-midnight-800 mb-2">Objet de la demande</label>
+                            <select id="requestType" class="w-full px-4 py-3 rounded-xl bg-cream-50 border border-cream-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <option value="adhesion-adulte">Demande d'adhésion — Pass Adulte</option>
+                                <option value="adhesion-etudiant">Demande d'adhésion — Tarif Étudiant</option>
+                                <option value="suggestion">Suggestion d'achat d'un livre</option>
+                                <option value="renseignement">Renseignement général</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="phone" class="block text-xs font-bold uppercase tracking-wider text-midnight-800 mb-2">Téléphone</label>
+                            <input type="tel" id="phone" placeholder="+237 6XX XX XX XX" class="w-full px-4 py-3 rounded-xl bg-cream-50 border border-cream-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="message" class="block text-xs font-bold uppercase tracking-wider text-midnight-800 mb-2">Message ou Genres favoris *</label>
+                        <textarea id="message" rows="4" required placeholder="Précisez vos préférences de lecture ou votre question..." class="w-full px-4 py-3 rounded-xl bg-cream-50 border border-cream-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full py-4 rounded-xl bg-midnight-900 hover:bg-midnight-800 text-amber-400 font-bold text-sm shadow-lg transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                        <span>Envoyer ma demande</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== PIED DE PAGE ==================== -->
+    <footer class="bg-midnight-950 text-cream-200/70 py-12 border-t border-midnight-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-lg bg-amber-500 text-midnight-950 flex items-center justify-center">
+                    <i data-lucide="book-open" class="w-4 h-4"></i>
+                </div>
+                <span class="font-serif text-lg font-bold text-white">Bibliothèque Horizon</span>
+            </div>
+            <p class="text-xs text-center sm:text-right">
+                © 2026 Bibliothèque Horizon — Plateforme de gestion culturelle et documentaire. Tous droits réservés.
+            </p>
+        </div>
+    </footer>
+
+    <!-- ==================== FENÊTRE MODALE : DÉTAILS D'UN LIVRE ==================== -->
+    <div id="book-detail-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-midnight-950/75 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl border border-cream-200 modal-fade-in">
+            <div id="modal-book-content">
+                <!-- Contenu injecté dynamiquement -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== FENÊTRE MODALE : AJOUTER UN LIVRE (MODE BIBLIOTHÉCAIRE) ==================== -->
+    <div id="add-book-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-midnight-950/75 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-cream-200 modal-fade-in">
+            <div class="flex items-center justify-between pb-4 mb-5 border-b border-cream-200">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-midnight-900 text-amber-400 flex items-center justify-center">
+                        <i data-lucide="book-plus" class="w-5 h-5"></i>
+                    </div>
+                    <h3 class="font-serif text-xl font-bold text-midnight-900">Nouvel Ouvrage au Catalogue</h3>
+                </div>
+                <button onclick="closeAddBookModal()" class="p-2 rounded-xl text-slate-400 hover:bg-cream-100 hover:text-midnight-900">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form id="add-book-form" onsubmit="handleAddBookSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase text-midnight-800 mb-1.5">Titre de l'ouvrage *</label>
+                    <input type="text" id="new-book-title" required placeholder="Ex: L'Alchimiste" class="w-full px-4 py-2.5 rounded-xl bg-cream-50 border border-cream-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-midnight-800 mb-1.5">Auteur *</label>
+                        <input type="text" id="new-book-author" required placeholder="Ex: Paulo Coelho" class="w-full px-4 py-2.5 rounded-xl bg-cream-50 border border-cream-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-midnight-800 mb-1.5">Année *</label>
+                        <input type="number" id="new-book-year" required min="1000" max="2026" value="2024" class="w-full px-4 py-2.5 rounded-xl bg-cream-50 border border-cream-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-midnight-800 mb-1.5">Catégorie *</label>
+                    <select id="new-book-category" class="w-full px-4 py-2.5 rounded-xl bg-cream-50 border border-cream-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-500">
+                        <option value="Roman">Roman</option>
+                        <option value="Science-Fiction">Science-Fiction</option>
+                        <option value="Informatique">Informatique</option>
+                        <option value="Histoire">Histoire</option>
+                        <option value="Développement personnel">Développement personnel</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase text-midnight-800 mb-1.5">Résumé court *</label>
+                    <textarea id="new-book-summary" rows="3" required placeholder="Description du livre pour les lecteurs..." class="w-full px-4 py-2.5 rounded-xl bg-cream-50 border border-cream-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+                </div>
+                <div class="pt-2 flex justify-end gap-3">
+                    <button type="button" onclick="closeAddBookModal()" class="px-4 py-2.5 rounded-xl bg-cream-100 hover:bg-cream-200 text-midnight-800 font-semibold text-sm">Annuler</button>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-midnight-950 font-bold text-sm shadow">Ajouter au fonds</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==================== TIROIR LATÉRAL : MES EMPRUNTS ==================== -->
+    <div id="loans-drawer-overlay" onclick="toggleLoansDrawer()" class="fixed inset-0 z-50 hidden bg-midnight-950/60 backdrop-blur-xs"></div>
+    <aside id="loans-drawer" class="fixed top-0 right-0 z-50 h-full w-full max-w-md bg-white shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="p-6 bg-midnight-900 text-white flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <i data-lucide="bookmark-check" class="w-6 h-6 text-amber-400"></i>
+                <div>
+                    <h3 class="font-serif text-xl font-bold">Mes Emprunts en Cours</h3>
+                    <p class="text-xs text-cream-200/70">Gérez vos réservations et retours</p>
+                </div>
+            </div>
+            <button onclick="toggleLoansDrawer()" class="p-2 rounded-xl text-cream-200 hover:bg-midnight-800">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <div id="loans-list" class="flex-1 overflow-y-auto p-6 space-y-4">
+            <!-- Liste dynamique des emprunts -->
+        </div>
+
+        <div class="p-5 bg-cream-50 border-t border-cream-200 text-xs text-slate-500 flex items-center gap-2">
+            <i data-lucide="info" class="w-4 h-4 text-amber-600 shrink-0"></i>
+            <span>La durée standard de prêt est de 21 jours. Vous pouvez restituer un livre à tout moment.</span>
+        </div>
+    </aside>
+
+    <!-- ==================== NOTIFICATION TOAST ==================== -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

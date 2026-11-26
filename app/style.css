@@ -1,0 +1,33 @@
+/* Animations et styles complémentaires pour Bibliothèque Horizon */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.modal-fade-in {
+    animation: modalFadeIn 0.2s ease-out forwards;
+}
+
+/* Barre de défilement discrète pour le tiroir d'emprunts */
+#loans-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+#loans-list::-webkit-scrollbar-track {
+    background: #fdfbf7;
+}
+
+#loans-list::-webkit-scrollbar-thumb {
+    background: #dfd5c0;
+    border-radius: 9999px;
+}
+
+#loans-list::-webkit-scrollbar-thumb:hover {
+    background: #c8b899;
+}
